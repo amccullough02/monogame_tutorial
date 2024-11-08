@@ -6,10 +6,7 @@ namespace MonogameTutorial;
 
 public class Game : Microsoft.Xna.Framework.Game
 {
-    Texture2D ballTexture;
-    Vector2 ballPosition;
-    float ballSpeed;
-    
+    private Ball ball;
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -18,14 +15,14 @@ public class Game : Microsoft.Xna.Framework.Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        ball = new Ball(300f);
     }
 
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
-        ballPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
-        ballSpeed = 300f;
-
+        ball.Initialize(_graphics);
+        
         base.Initialize();
     }
 
@@ -34,7 +31,7 @@ public class Game : Microsoft.Xna.Framework.Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         // TODO: use this.Content to load your game content here
-        ballTexture = Content.Load<Texture2D>("ball");
+        ball.LoadContent(Content);
     }
 
     protected override void Update(GameTime gameTime)
@@ -44,47 +41,7 @@ public class Game : Microsoft.Xna.Framework.Game
             Exit();
 
         // TODO: Add your update logic here
-        float updatedBallSpeed = ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-        
-        var kstate = Keyboard.GetState();
-
-        if (kstate.IsKeyDown(Keys.W))
-        {
-            ballPosition.Y -= updatedBallSpeed;
-        }
-
-        if (kstate.IsKeyDown(Keys.S))
-        {
-            ballPosition.Y += updatedBallSpeed;
-        }
-
-        if (kstate.IsKeyDown(Keys.A))
-        {
-            ballPosition.X -= updatedBallSpeed;
-        }
-
-        if (kstate.IsKeyDown(Keys.D))
-        {
-            ballPosition.X += updatedBallSpeed;
-        }
-
-        if (ballPosition.X > _graphics.PreferredBackBufferWidth - ballTexture.Width / 2)
-        {
-            ballPosition.X = _graphics.PreferredBackBufferWidth - ballTexture.Width / 2;
-        }
-        else if (ballPosition.X < ballTexture.Width / 2)
-        {
-            ballPosition.X = ballTexture.Width / 2;
-        }
-
-        if (ballPosition.Y > _graphics.PreferredBackBufferHeight - ballTexture.Height / 2)
-        {
-            ballPosition.Y = _graphics.PreferredBackBufferHeight - ballTexture.Height / 2;
-        }
-        else if (ballPosition.Y < ballTexture.Height / 2)
-        {
-            ballPosition.Y = ballTexture.Height / 2;
-        }
+        ball.Update(_graphics, gameTime);
 
         base.Update(gameTime);
     }
@@ -95,17 +52,7 @@ public class Game : Microsoft.Xna.Framework.Game
 
         // TODO: Add your drawing code here
         _spriteBatch.Begin();
-        _spriteBatch.Draw(
-            ballTexture, 
-            ballPosition,
-            null,
-            Color.White,
-            0f,
-            new Vector2(ballTexture.Width / 2, ballTexture.Height / 2),
-            Vector2.One,
-            SpriteEffects.None,
-            0f
-            );
+        ball.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);
