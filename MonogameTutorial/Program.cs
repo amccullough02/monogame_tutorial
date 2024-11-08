@@ -1,2 +1,2 @@
-﻿using var game = new MonogameTutorial.Game1();
+﻿using var game = new MonogameTutorial.Game();
 game.Run();
