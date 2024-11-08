@@ -6,6 +6,10 @@ namespace MonogameTutorial;
 
 public class Game : Microsoft.Xna.Framework.Game
 {
+    Texture2D ballTexture;
+    Vector2 ballPosition;
+    float ballSpeed;
+    
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -19,6 +23,8 @@ public class Game : Microsoft.Xna.Framework.Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        ballPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
+        ballSpeed = 100f;
 
         base.Initialize();
     }
@@ -28,6 +34,7 @@ public class Game : Microsoft.Xna.Framework.Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         // TODO: use this.Content to load your game content here
+        ballTexture = Content.Load<Texture2D>("ball");
     }
 
     protected override void Update(GameTime gameTime)
@@ -37,6 +44,29 @@ public class Game : Microsoft.Xna.Framework.Game
             Exit();
 
         // TODO: Add your update logic here
+        float updatedBallSpeed = ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        var kstate = Keyboard.GetState();
+
+        if (kstate.IsKeyDown(Keys.W))
+        {
+            ballPosition.Y -= updatedBallSpeed;
+        }
+
+        if (kstate.IsKeyDown(Keys.S))
+        {
+            ballPosition.Y += updatedBallSpeed;
+        }
+
+        if (kstate.IsKeyDown(Keys.A))
+        {
+            ballPosition.X -= updatedBallSpeed;
+        }
+
+        if (kstate.IsKeyDown(Keys.D))
+        {
+            ballPosition.X += updatedBallSpeed;
+        }
 
         base.Update(gameTime);
     }
@@ -46,6 +76,19 @@ public class Game : Microsoft.Xna.Framework.Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
         // TODO: Add your drawing code here
+        _spriteBatch.Begin();
+        _spriteBatch.Draw(
+            ballTexture, 
+            ballPosition,
+            null,
+            Color.White,
+            0f,
+            new Vector2(ballTexture.Width / 2, ballTexture.Height / 2),
+            Vector2.One,
+            SpriteEffects.None,
+            0f
+            );
+        _spriteBatch.End();
 
         base.Draw(gameTime);
     }
